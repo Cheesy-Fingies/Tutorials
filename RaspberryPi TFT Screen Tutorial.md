@@ -71,6 +71,8 @@ nslookup
 
 ![rpi_ssh_connect_nslookup](https://github.com/user-attachments/assets/f96e4bed-5d55-4ffc-b6c4-476ce1d0be34)
 
+There it is! We now have the local IP address of our raspberrypi and may proceed to logging in via SSH. Use the following command to attempt an ssh connection...
+
 ```sh
 ssh pi@<local-host ip>
 ```
@@ -164,10 +166,10 @@ dtparam=fps=60
 dtparam=rotate=270
 dtparam=speed=40000000
 ```
-*fbtft* will be the name of the driver, *spi0-0* is using the 0-0 standard spi mode(there are four), *st7789v* is the physical hardware display driver the TFT screen is using.
-*dc_pin* and *reset_pin* are are set using their SOFTWARE defined names; we must set these two pins for the driver to function properly, and pins 24 and 25 just so happen to be available.
+*fbtft* is the driver built-in to the kernel of the OS and will be the name given to our driver, *spi0-0* uses the 0-0 standard spi mode(there are four), *st7789v* is the physical hardware display driver the TFT screen is using.
+*dc_pin* and *reset_pin* are set using their SOFTWARE-defined names; we must set these two pins for the driver to function properly, and pins 24 and 25 just so happen to be available.
 *width* and *height* are defined for what the screen's hardware offers, in our case 320x240 is the pixel size we must define. *fps* is used to set the framerate the screen refreshes at. *rotate* is optional, only use this if the screen alignment does not function as intended.
-*speed* is the SPI communication speed, do not exceed 50MHz(50000000), but make sure to be above 10MHz(10000000) so the screen does not buffer when drawing new frames to the screen.
+*speed* is the SPI communication speed, not exceeding 50MHz(50000000), but make sure to be above 10MHz(10000000) so the screen does not buffer when drawing new frames to the screen.
 
 Once completed, it should appear as such...
 
