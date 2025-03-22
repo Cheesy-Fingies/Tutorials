@@ -112,6 +112,126 @@ Start by configuring the device with...
 sudo raspi-config
 ```
 
+You will then be presented with the following screen...
+
+![rpi_os_setup_ssh_TFT_firmware_raspi-config](https://github.com/user-attachments/assets/b53ec8f7-b2de-4dc2-8742-dd2b9550b469)
+
+From here, select *1 System Options*
+
+![rpi_os_setup_ssh_TFT_firmware_raspi-config2](https://github.com/user-attachments/assets/d77464f9-cbad-481a-84bb-707acd75a4e1)
+
+Proceed then by selecting *S5 Boot*
+
+![rpi_os_setup_ssh_TFT_firmware_raspi-config3](https://github.com/user-attachments/assets/305d1bd7-145f-452b-a6df-77d360b964ca)
+
+Decide here if you would like for the RPI to boot to the command-line or the desktop environment
+
+After you have made the decisions about the where to boot to exit by clicking finish 
+
+![rpi_os_setup_ssh_TFT_firmware_raspi-config4](https://github.com/user-attachments/assets/d85e00fc-8ec9-4d80-83df-b8ac8dea68a9)
+
+The next step is to write the driver code for the system to interface with SPI screen. Start by typing the following command argument
+
+```sh
+sudo nano /boot/firmware/config.txt
+```
+
+This command will bring us to the file configuring all the hardware the RPI includes or should utilize. We will write our driver here so it is seen by the pi.
+Firstly, find...
+```sh
+#dtparam=spi=on
+```
+...and erase the '#' character to activate the SPI protocol. 
+
+![rpi_os_setup_ssh_TFT_firmware_spi_on](https://github.com/user-attachments/assets/5ba67281-3fbb-471b-8301-ceb41795f50a)
+
+
+Next, deactivate the following line...
+```sh
+dtoverlay=vc4-kms-v3d
+```
+...which is deactivated by doing the opposite of before, placing a '#' character before the line. This has to be done to ensure HDMI does not take over as the main display, otherwise, nothing will display on our SPI TFT! 
+
+Then, right below this deactivation, write the following bit of driver code...
+```sh
+# TFT Screen Driver
+dtoverlay=fbtft,spi0-0,st7789v
+dtparam=dc_pin=24
+dtparam=reset_pin=25
+dtparam=width=240
+dtparam=height=320
+dtparam=fps=60
+dtparam=rotate=270
+dtparam=speed=40000000
+```
+*fbtft* will be the name of the driver, *spi0-0* is using the 0-0 standard spi mode(there are four), *st7789v* is the physical hardware display driver the TFT screen is using.
+*dc_pin* and *reset_pin* are are set using their SOFTWARE defined names; we must set these two pins for the driver to function properly, and pins 24 and 25 just so happen to be available.
+*width* and *height* are defined for what the screen's hardware offers, in our case 320x240 is the pixel size we must define. *fps* is used to set the framerate the screen refreshes at. *rotate* is optional, only use this if the screen alignment does not function as intended.
+*speed* is the SPI communication speed, do not exceed 50MHz(50000000), but make sure to be above 10MHz(10000000) so the screen does not buffer when drawing new frames to the screen.
+
+Once completed, it should appear as such...
+
+![rpi_os_setup_ssh_TFT_firmware](https://github.com/user-attachments/assets/cb3b73ad-9c84-4216-9989-9890abf482c1)
+
+Exit from this file by hitting "CTRL + X", then type "Y" to save the file; DO NOT ALTER THE FILE NAME JUST SAVE IT!
+
+Perform the *sudo reboot* command...
+```sh
+sudo reboot
+```
+
+Now, if you selected to boot to the command-line interface (CLI) mode, then you are all done! Login and the TFT screen will boot to a terminal view! 
+
+![rpi_tft_login](https://github.com/user-attachments/assets/4f1c6430-5fed-454a-af4f-79425c1e9c95)
+
+Here is the same nano viewer we just used to change the boot file, but on the TFT screen...
+
+![rpi_tft_login_nanoviewer](https://github.com/user-attachments/assets/4b560e81-7a06-4669-9414-1728d50df377)
+
+While I don't recommend using a screen this small for a desktop environment, it is possible to set it up. If you selected to have a desktop GUI, you will see this at the boot process...
+
+![rpi_tft_desktop_boot](https://github.com/user-attachments/assets/650d5337-ab4d-4bae-b69d-ab2339601bf5)
+
+This will take a minute or two. Next, the desktop will appear but it will not fit the screen very well; We will have to configure this!
+
+![rpi_tft_desktop_first](https://github.com/user-attachments/assets/d2cd5823-473c-4b0f-b13c-b58f1c4c7856)
+
+Go to the *raspberry-pi logo* at the top left of the screen and scroll down in the drop-down menu until you see preferences...
+
+![rpi_tft_desktop_PI_dropdown](https://github.com/user-attachments/assets/da2fc0d9-3481-4939-9472-6d7fc74e359a)
+
+Now you will click on *appearance settings*...
+
+![rpi_tft_desktop_settings](https://github.com/user-attachments/assets/62a5f149-8899-4129-b381-3e4383ad91b9)
+
+Afterwards, do your best to move the popped-up window and find the *defaults* tab
+
+![rpi_tft_desktop_appearance_settings](https://github.com/user-attachments/assets/a8264988-dfa7-45e4-8e9c-ab75302673fe)
+
+There will be three options, pick *small screens* so we can better fit the GUI to the border
+
+![rpi_tft_desktop_small_screens](https://github.com/user-attachments/assets/7f645386-26b4-4b8b-9be9-d96507de7da9)
+
+After clicking this option, the window and taskbar should adjust and should appear as something like the following... 
+
+![rpi_tft_desktop_resize](https://github.com/user-attachments/assets/1b5b6d18-1d4f-45b1-84ec-2b8a79ede957)
+
+We can now close out of this menu and finally take a breath because we are also done!
+
+![rpi_tft_desktop_final](https://github.com/user-attachments/assets/1206b8bf-9eef-4519-a34b-5af35c78c7d3)
+
+
+While some windows still don't fit well, this can't be helped due to the screen size. If you are set on using a desktop environment, I recommend buying a screen that is at minimum 640x480 for the desktop enviornment to configure properly! Just don't forget to alter the settings for this bigger screen in the */boot/firmware/config.txt* file, too.
+
+
+That being said, if you followed up until this point, you now have a Raspberry Pi with a working TFT screen using the SPI protocol. This can be incorporated into a multitude of projects where large monitors are not necessary, but a display is required for simpler tasks (ie. showing time, temperature, or ip information). Congrats on setting up your screen and thank you for reading!
+
+
+
+
+
+
+
 
 
 
