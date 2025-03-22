@@ -63,7 +63,11 @@ This command will list all the devices and MAC addresses that can be seen by the
 
 ![rpi_ssh_connect_arp](https://github.com/user-attachments/assets/1567b921-3226-41da-8fdd-42652c0bd558)
 
-We now have a list of local hosts. Unless you want to log into your network's WiFi router to find the devices local ip, you will now have to test the various hosts until you come across the raspberrypi. It will appear similar to the following...
+We now have a list of local hosts. Unless you want to log into your network's WiFi router to find the devices local ip, you will now have to test the various hosts until you come across the raspberrypi. It will appear similar to the following after using the command...
+
+```sh
+nslookup
+```
 
 ![rpi_ssh_connect_nslookup](https://github.com/user-attachments/assets/f96e4bed-5d55-4ffc-b6c4-476ce1d0be34)
 
